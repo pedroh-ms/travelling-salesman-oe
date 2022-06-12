@@ -14,8 +14,9 @@ class SAModel:
         self.num_cycles = num_cycles
         self.num_att_per_cycle = num_att_per_cycle
         self.init_temp = init_temp
+        
 
-    def solve(self, initial_route=None):
+    def run(self, initial_route=None):
 
         if not initial_route:
             self.best_route = Route(self.start, self.start, self.distance_matrix)
@@ -52,4 +53,4 @@ class SAModel:
                    delta_energ_avg = (delta_energ_avg * (na - 1.0) + delta_energ) / na
 
             t = ((i + 1) / self.num_cycles) * t 
-                   
+

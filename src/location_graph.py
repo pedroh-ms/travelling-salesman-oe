@@ -6,6 +6,7 @@ import folium
 
 from route import *
 from simulated_annealing import *
+from genetic_algorithm import *
 
 
 class LocationGraph:
@@ -37,17 +38,24 @@ class LocationGraph:
                                                                      target=self.node_ids[j], 
                                                                      weight='length')
         
-    def newRoute(self, source, target):
+    def newRoute(self, source, target, from_places=None):
 
-        return Route(source, target, self.distance_matrix)
+        return Route(source, target, self.distance_matrix, from_places)
 
 
-    def travellingSalesman(self, start, **kwargs):
-
-        model = SAModel(self, start, 
-                        num_cycles=kwargs.get('num_cycles'),
-                        num_att_per_cycle=kwargs.get('num_att_per_cycles'),
-                        init_temp=kwargs.get('init_temp'))
+    def travellingSalesman(self, start, method, **kwargs):
+        
+        if method == 'SA':
+            model = SAModel(self, start, 
+                            num_cycles=kwargs.get('num_cycles'),
+                            num_att_per_cycle=kwargs.get('num_att_per_cycles'),
+                            init_temp=kwargs.get('init_temp'))
+                            
+        if method == 'GA':
+            model = GAModel(self, start,
+                            num_generations=kwargs.get('num_generations'),
+                            population_size=kwargs.get('population_size'),
+                            mutation_prob=kwargs.get('mutation_prob'))
 
         return model
 
@@ -87,7 +95,7 @@ class LocationGraph:
             folium.Marker((coordinates[index][1], coordinates[index][0]),
                           tooltip=f'{i}: {place_names[index]}; {distances[i]:0.2f} km to next place').add_to(route_map)
             folium.map.Marker(
-                coordinates[index],
+                (coordinates[index][1], coordinates[index][0]),
                 icon=folium.DivIcon(
                     icon_size=(250, 36),
                     icon_anchor=(0, 0),
