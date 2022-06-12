@@ -77,8 +77,8 @@ def ga_test():
         initial_pop.append(lc_graph.newRoute(PLACES_KEYS.index(START_PLACE), PLACES_KEYS.index(END_PLACE), i))
         
     model = lc_graph.travellingSalesman(PLACES_KEYS.index(START_PLACE), 'GA',
-                                        num_generations=2000,
-                                        population_size=400,
+                                        num_generations=50,
+                                        population_size=71,
                                         mutation_prob=0.1)
                                     
 
