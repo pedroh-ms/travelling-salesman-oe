@@ -32,11 +32,9 @@ class GAModel:
             fitness_sum = 0    
             for i in range(self.population_size):
                 fitness_sum += population[i].cost
-        
-            probability = []
-            for i in range(self.population_size):
-                probability.append((1 - (population[i].cost/fitness_sum)) / (self.population_size - 1))
-                
+            
+            probability = [(1 - (population[i].cost/fitness_sum)) / (self.population_size - 1) for i in range(self.population_size)]
+    
             wheel = [probability[0]]
             for i in range(1, self.population_size):
                 wheel.append(wheel[i - 1] + probability[i])

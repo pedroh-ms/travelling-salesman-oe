@@ -72,6 +72,6 @@ def ga_test():
 
 if __name__ == '__main__':
 
-    sa_test()
-    # ga_test()
+    # sa_test()
+    ga_test()
 
