@@ -1,4 +1,5 @@
 *.html
 *.pyc
 *.json
+log.txt
 venv/

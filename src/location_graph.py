@@ -10,26 +10,37 @@ from genetic_algorithm import *
 
 
 class LocationGraph:
+    '''LocationGraph class that represents the location where the places are
+    as a graph.
+    
+    :param location: The name of the location
+    :type location: str
+    :param places: Dictionary containing the coordinates of the places
+    :type places: dict
+    :param network_type: The type of the graph
+    :type network_type: str
+    '''
 
     def __init__(self, location, places, network_type):
-
+        '''Constructor method of LocationGraph.
+        '''
         self.places = places
 
-        # get the graph from the place specified in location with the type of
+        # gets the graph from the place specified in location with the type of
         # network_type
         self.g = ox.graph.graph_from_place(location, network_type=network_type)
         x, y = [], []
 
-        # separate the coordinates in x, for longitude, and y, for latitude
+        # separates the coordinates in x, for longitude, and y, for latitude
         for k, v in self.places.items():
             x.append(v[0])
             y.append(v[1])
 
-        # get the nearest nodes from the coordinates in the graph g
+        # gets the nearest nodes from the coordinates in the graph g
         self.node_ids = ox.distance.nearest_nodes(self.g, x, y)
 
         n = len(self.node_ids)
-        # calculate the matrix distance from every place to every place
+        # calculates the matrix distance from every place to every place
         self.distance_matrix = np.zeros((n, n))
         for i in range(n):
             for j in range(n):
@@ -39,12 +50,31 @@ class LocationGraph:
                                                                      weight='length')
         
     def newRoute(self, source, target, from_places=None):
-
+        '''Creates a new route based on the location graph.
+        
+        :param source: The source place of the route
+        :type source: int
+        :param target: The target place of the route
+        :type target: int
+        :param from_places: A list that defines the places of the route, defaults to None
+        :type from_places: list, optional
+        :return: A :class:`route.Route` object
+        :rtype: class: `route.Route`
+        '''
         return Route(source, target, self.distance_matrix, from_places)
 
 
     def travellingSalesman(self, start, method, **kwargs):
+        '''Method for the travelling salesman problem solved with metaheuristics.
         
+        :param start: The start place of the problem
+        :type start: int
+        :param method: The metaheuristics to solve the problem
+        :type method: str
+        :param `**kwargs`: Keyword arguments to pass different values to the arguments of the metaheuristics
+        :return: A model class of the metaheuristic defined in method
+        :rtype: class:`simulated_annealing.SAModel` or class:`genetic_algorithm.GAModel`
+        '''
         if method == 'SA':
             model = SAModel(self, start, 
                             num_cycles=kwargs.get('num_cycles'),
@@ -61,7 +91,13 @@ class LocationGraph:
 
 
     def createRouteMap(self, otim_model):
-
+        '''Creates the route map of the best solution of the travelling salesman problem.
+        
+        :param otim_model: Model used to find the best solution
+        :type otim_model: class:`simulated_annealing.SAModel` or class:`genetic_algorithm.GAModel`
+        :return: The map object of the best route
+        :rtype: class:`folium.folium.map`
+        '''
         place_names = []
         coordinates = []
         for k, v in self.places.items():
